@@ -1,0 +1,36 @@
+k8s_kubeconfig: ~/.kube/config
+
+k8s_hosting_services_project_name: ""
+k8s_hosting_services_aws_secret_access_key: ""
+k8s_hosting_services_database_url: ""
+k8s_hosting_services_healthcheck_url: ""
+
+k8s_hosting_services_enabled: true
+k8s_hosting_services_name: backup-job
+k8s_hosting_services_namespace: hosting-services
+k8s_hosting_services_environment:
+  PROJECT_NAME: "{{ k8s_hosting_services_project_name }}"
+  BACKUP_BASE_BUCKET: caktus-hosting-services-backups
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: AKIAY4HLSP7PECOHWU7P
+  AWS_SECRET_ACCESS_KEY: "{{ k8s_hosting_services_aws_secret_access_key }}"
+  DATABASE_URL: "{{ k8s_hosting_services_database_url }}"
+  BACKUP_HEALTHCHECK_URL: "{{ k8s_hosting_services_healthcheck_url }}"
+k8s_hosting_services_image: ghcr.io/caktus/k8s-caktus-backup
+k8s_hosting_services_image_tag: 0.0.4
+k8s_hosting_services_image_pull_policy: IfNotPresent
+k8s_hosting_services_resources:
+  requests:
+    memory: "100Mi"
+    cpu: "50m"
+k8s_hosting_services_cron_schedules:
+  - label: hourly
+    schedule: "@hourly"
+  - label: daily
+    schedule: "@daily"
+  - label: weekly
+    schedule: "@weekly"
+  - label: monthly
+    schedule: "@monthly"
+  - label: yearly
+    schedule: "@yearly"
