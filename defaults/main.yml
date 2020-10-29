@@ -24,8 +24,6 @@ k8s_hosting_services_resources:
     memory: "100Mi"
     cpu: "50m"
 k8s_hosting_services_cron_schedules:
-  - label: hourly
-    schedule: "@hourly"
   - label: daily
     schedule: "@daily"
   - label: weekly
