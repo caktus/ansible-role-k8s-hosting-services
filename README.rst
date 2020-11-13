@@ -31,6 +31,7 @@ Installation and Configuration
       ---
       - src: https://github.com/caktus/ansible-role-k8s-hosting-services
         name: caktus.k8s-hosting-services
+        version: v0.0.1
 
 #. Create a ``deploy/deploy-hosting-services.yaml`` file which you'll run once to set up
    the backup process (and then infrequently whenever you'd like to make changes to it).
@@ -80,19 +81,17 @@ Installation and Configuration
       k8s_hosting_services_database_url: "<... secret from ansible-vault output ...>"
       k8s_hosting_services_healthcheck_url: "<... secret from ansible-vault output ...>"
 
-#. By default, this role will run backups on an hourly, daily, weekly, monthly and
-   yearly schedule. If you don't need all of those, or if you need a custom schedule,
-   then override ``k8s_hosting_services_cron_schedules``. Ideally, you should do this
-   before your run this role for the first time, because this role does not delete
-   existing schedules. If you do need to delete a schedule, you can do it manually using
-   k8s commands. Here is an example of customizing your schedule to remove hourly
-   backups and add a rule to backup every 2 hours:
+#. By default, this role will run backups on a daily, weekly, monthly and yearly
+   schedule. If you don't need all of those, or if you need a custom schedule, then
+   override ``k8s_hosting_services_cron_schedules``. Ideally, you should do this before
+   your run this role for the first time, because this role does not delete existing
+   schedules. If you do need to delete a schedule, you can do it manually using k8s
+   commands. Here is an example of customizing your schedule to remove daily backups
+   and add a rule to backup every 2 hours:
 
    .. code-block:: yaml
 
       k8s_hosting_services_cron_schedules:
-        - label: daily
-          schedule: "@daily"
         - label: weekly
           schedule: "@weekly"
         - label: monthly
@@ -115,11 +114,11 @@ kubernetes cluster.
 
   .. code-block:: sh
 
-     inv playbook -n deploy-hosting-services.yaml
+     inv playbook deploy-hosting-services.yaml
 
 * Without invoke-kubesae:
 
   .. code-block:: sh
 
      cd deploy/
-     ansible-playbook -l cluster deploy-hosting-services.yaml -vv
+     ansible-playbook deploy-hosting-services.yaml -vv
