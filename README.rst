@@ -1,10 +1,9 @@
 caktus.k8s-hosting-services
 ===========================
 
-.. |master-status| image::
-    https://github.com/caktus/ansible-role-k8s-hosting-services/workflows/test/badge.svg?branch=master
-    :alt: Build Status
-    :target: https://github.com/caktus/ansible-role-k8s-hosting-services/actions?query=branch%3Amaster
+.. sidebar:: Build Status
+
+   :master: |master-status|
 
 An Ansible role to allow Caktus Kubernetes projects to take advantage of common
 Caktus-provided services. These include:
@@ -146,3 +145,8 @@ set up a Python 3 virtualenv and then set up pre-commit:
 
 The pre-commit tasks will run on each commit locally, and will run in Github Actions for
 each pull request.
+
+.. |master-status| image::
+    https://github.com/caktus/ansible-role-k8s-hosting-services/workflows/test/badge.svg?branch=master
+    :alt: Build Status
+    :target: https://github.com/caktus/ansible-role-k8s-hosting-services/actions?query=branch%3Amaster
