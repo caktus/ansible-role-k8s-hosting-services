@@ -1,11 +1,14 @@
 caktus.k8s-hosting-services
 ===========================
 
-An Ansible role to allow Caktus Kubernetes projects to easily back up their Postgres
-database to the proper Caktus Hosting Services AWS S3 bucket.
+An Ansible role to allow Caktus Kubernetes projects to take advantage of common
+Caktus-provided services. These include:
+
+* backing up the Postgres database to the proper Caktus Hosting Services AWS S3 bucket.
+* More coming soon! (Papertrail, NewRelic infra, etc)
 
 License
-~~~~~~~~~~~~~~~~~~~~~~
+-------
 
 This Ansible role is released under the BSD License.  See the `LICENSE
 <https://github.com/caktus/ansible-role-aws-web-stacks/blob/master/LICENSE>`_
@@ -15,14 +18,8 @@ Development sponsored by `Caktus Consulting Group, LLC
 <http://www.caktusgroup.com/services>`_.
 
 
-Requirements
-~~~~~~~~~~~~~~~~~~~~~~
-
-* ``pip install openshift kubernetes-validate``
-
-
-Installation and Configuration
-------------------------------
+How do I add this role to my project
+------------------------------------
 
 1. Add to your ``requirements.yaml``:
 
@@ -63,7 +60,10 @@ Installation and Configuration
    #. The hosting services BACKUP_HEALTHCHECK_URL.
 
    The first should be obtained from your project's configuration and the other two
-   items will be given to you by the Caktus TS team.
+   items will be given to you by the Caktus TS team. (TS Team: AWS_SECRET_ACCESS_KEY is
+   in the LastPass shared entry: "Caktus Website Hosting Services k8s secrets" and you
+   should generate a new healtcheck url at healtchecks.io and provide that to the
+   developer for their BACKUP_HEALTHCHECK_URL variable)
 
    Use ansible-vault to encrypt them:
 
@@ -80,6 +80,9 @@ Installation and Configuration
       k8s_hosting_services_aws_secret_access_key: "<... secret from ansible-vault output ...>"
       k8s_hosting_services_database_url: "<... secret from ansible-vault output ...>"
       k8s_hosting_services_healthcheck_url: "<... secret from ansible-vault output ...>"
+
+   ``k8s_hosting_services_project_name`` will be the directory in S3 under which these
+   backups will be stored.
 
 #. By default, this role will run backups on a daily, weekly, monthly and yearly
    schedule. If you don't need all of those, or if you need a custom schedule, then
@@ -107,8 +110,8 @@ Installation and Configuration
 Usage
 -----
 
-Once you have configured the role as described above, you can deploy this to your
-kubernetes cluster.
+Once you have configured the role as described above (or any time you need to make a
+change to the configuration), you can deploy this to your kubernetes cluster.
 
 * Using invoke-kubesae:
 
