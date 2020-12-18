@@ -106,9 +106,10 @@ How do I add this role to my project
 
 #. Review ``defaults/main.yml`` in this repo to see other variables that you can override.
 
+#. See the next section for the commands to deploy this role to your cluster.
 
-Usage
------
+How do I deploy this role to my cluster
+---------------------------------------
 
 Once you have configured the role as described above (or any time you need to make a
 change to the configuration), you can deploy this to your kubernetes cluster.
@@ -125,3 +126,18 @@ change to the configuration), you can deploy this to your kubernetes cluster.
 
      cd deploy/
      ansible-playbook deploy-hosting-services.yaml -vv
+
+
+Maintainer information
+----------------------
+
+If you are working on the role itself (rather than just using the role), make sure to
+set up a Python 3 virtualenv and then set up pre-commit:
+
+.. code-block:: sh
+
+   pip install -Ur requirements.txt
+   pre-commit install  # <- only needs to be done once
+
+The pre-commit tasks will run on each commit locally, and will run in Github Actions for
+each pull request.

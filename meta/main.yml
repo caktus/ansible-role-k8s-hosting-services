@@ -1,7 +1,12 @@
 ---
 galaxy_info:
+  role_name: k8s_hosting_services
   author: Caktus Consulting Group, LLC
   description: Backup database instances on Kubernetes
   company: Caktus Consulting Group, LLC
   license: BSD
+  min_ansible_version: 2.9
+  platforms:
+    - name: Ubuntu
+      versions: all
 dependencies: []
