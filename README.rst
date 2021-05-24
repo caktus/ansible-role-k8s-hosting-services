@@ -112,6 +112,7 @@ How do I add this role to my project
 
 #. See the next section for the commands to deploy this role to your cluster.
 
+
 How do I deploy this role to my cluster
 ---------------------------------------
 
@@ -130,6 +131,17 @@ change to the configuration), you can deploy this to your kubernetes cluster.
 
      cd deploy/
      ansible-playbook deploy-hosting-services.yaml -vv
+
+
+Papertrail
+---------------------------------------
+
+Add the following for each cluster to monitor:
+
+   .. code-block:: yaml
+
+      k8s_papertrail_logspout_destination: syslog+tls://YYYYY.papertrailapp.com:NNNNN
+      k8s_papertrail_logspout_syslog_hostname: "{{ k8s_cluster_name }}"
 
 
 Maintainer information
