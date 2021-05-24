@@ -25,3 +25,6 @@
       fail_on_error: yes
       strict: yes
     definition: "{{ lookup('template', 'hosting-services/backup-job.yaml.j2') }}"
+
+- name: Include Papertrail tasks
+  include_tasks: papertrail.yml
