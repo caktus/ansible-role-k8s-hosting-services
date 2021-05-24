@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - main
   schedule:
     # run once a week on early monday mornings
     - cron: '22 2 * * 1'
