@@ -3,7 +3,7 @@ caktus.k8s-hosting-services
 
 .. sidebar:: Build Status
 
-   :master: |master-status|
+   :main: |main-status|
 
 An Ansible role to allow Caktus Kubernetes projects to take advantage of common
 Caktus-provided services. These include:
