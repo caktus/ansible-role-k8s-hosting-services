@@ -2,6 +2,11 @@ caktus.k8s-hosting-services Releases
 ====================================
 
 
+v0.2.0 on 2021-05-24
+~~~~~~~~~~~~~~~~~~~~
+* Add New Relic Helm chart
+
+
 v0.1.0 on 2021-05-24
 ~~~~~~~~~~~~~~~~~~~~
 * Add Papertrail support
