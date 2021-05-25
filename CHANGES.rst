@@ -2,7 +2,7 @@ caktus.k8s-hosting-services Releases
 ====================================
 
 
-v0.2.0 on 2021-05-24
+v0.2.0 on 2021-05-25
 ~~~~~~~~~~~~~~~~~~~~
 * Add New Relic Helm chart
 
