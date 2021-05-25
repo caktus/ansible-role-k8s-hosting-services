@@ -2,7 +2,7 @@
   k8s:
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
-    state: "{{ k8s_papertrail_logspout_enabled | ternary('present', 'absent') }}"
+    state: present
     wait: yes
     validate:
       fail_on_error: yes
@@ -13,6 +13,7 @@
       metadata:
         name: "{{ k8s_papertrail_logspout_namespace }}"
   tags: [papertrail]
+  when: k8s_papertrail_logspout_enabled
 
 - name: Deploy Papertrail logspout
   k8s:
@@ -33,7 +34,7 @@
   k8s:
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
-    state: "{{ k8s_newrelic_enabled | ternary('present', 'absent') }}"
+    state: present
     wait: yes
     validate:
       fail_on_error: yes
@@ -44,6 +45,7 @@
       metadata:
         name: "{{ k8s_newrelic_namespace }}"
   tags: [newrelic]
+  when: k8s_hosting_services_enabled
 
 - name: Add New Relic Helm chart
   community.kubernetes.helm:
