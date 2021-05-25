@@ -28,3 +28,6 @@
 
 - name: Include Papertrail tasks
   include_tasks: papertrail.yml
+
+- name: Include New Relic tasks
+  include_tasks: newrelic.yml

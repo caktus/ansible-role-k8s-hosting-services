@@ -1,0 +1,30 @@
+- name: Create namespace for New Relic
+  k8s:
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    state: "{{ k8s_newrelic_enabled | ternary('present', 'absent') }}"
+    wait: yes
+    validate:
+      fail_on_error: yes
+      strict: yes
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ k8s_newrelic_namespace }}"
+  tags: [newrelic]
+
+- name: Add New Relic Helm chart
+  community.kubernetes.helm:
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    chart_repo_url: https://helm-charts.newrelic.com
+    chart_ref: "{{ k8s_newrelic_chart_ref }}"
+    # https://github.com/newrelic/helm-charts/releases
+    chart_version: "{{ k8s_newrelic_chart_version }}"
+    release_state: "{{ k8s_newrelic_enabled | ternary('present', 'absent') }}"
+    release_name: "{{ k8s_newrelic_release_name }}"
+    release_namespace: "{{ k8s_newrelic_namespace }}"
+    release_values: "{{ lookup('template', 'newrelic/newrelic-nri-bundle.yml.j2') | from_yaml }}"
+    wait: yes
+  tags: [newrelic]
