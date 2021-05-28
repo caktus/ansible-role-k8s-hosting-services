@@ -1,0 +1,39 @@
+# enables newrelic-infrastructure
+infrastructure:
+  enabled: {{ k8s_newrelic_infrastructure_enabled }}
+
+# enables nri-prometheus
+prometheus:
+  enabled: {{ k8s_newrelic_prometheus_enabled }}
+
+# enables nri-metadata-injection
+webhook:
+  enabled: {{ k8s_newrelic_webhook_enabled }}
+
+# enables kube-state-metrics
+ksm:
+  enabled: {{ k8s_newrelic_ksm_enabled }}
+
+# enables nri-kube-events
+kubeEvents:
+  enabled: {{ k8s_newrelic_kubeevents_enabled }}
+
+# enables newrelic-logging
+logging:
+  enabled: {{ k8s_newrelic_logging_enabled }}
+
+# enables newrelic-pixie
+newrelic-pixie:
+  enabled: {{ k8s_newrelic_pixie_enabled }}
+
+# enables pixie-chart
+pixie-chart:
+  enabled: {{ k8s_newrelic_pixie_chart_enabled }}
+
+# enables newrelic-infra-operator
+newrelic-infra-operator:
+  enabled: {{ k8s_newrelic_infra_operator_enabled }}
+
+global:
+  licenseKey: "{{ k8s_newrelic_license_key }}"
+  cluster: "{{ k8s_newrelic_cluster_name }}"
