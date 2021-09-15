@@ -50,7 +50,13 @@ How do I add this role to my project
           ansible_python_interpreter: "{{ ansible_playbook_python }}"
         gather_facts: false
         roles:
-          - role: caktus.k8s-hosting-services
+          - role: caktus.k8s-hosting-services  # backups only
+        # Install configured monitoring tools (optional):
+        tasks:
+           - import_role:
+               name: caktus.k8s-hosting-services
+               tasks_from: monitoring
+
 
 #. Ensure the ``production`` host is in your ``deploy/inventory`` file:
 
@@ -203,6 +209,21 @@ Add the following for each cluster to monitor:
 
       k8s_papertrail_logspout_destination: syslog+tls://YYYYY.papertrailapp.com:NNNNN
       k8s_papertrail_logspout_syslog_hostname: "{{ k8s_cluster_name }}"
+
+
+New Relic Infrastructure
+---------------------------------------
+
+New Relic's [Helm Charts](https://github.com/newrelic/helm-charts/) are used to
+install New Relic Infrastructure monitoring.
+
+Add the following for each cluster to monitor:
+
+   .. code-block:: yaml
+
+      # https://github.com/newrelic/helm-charts/releases
+      k8s_newrelic_chart_version: "2.22.3"
+      k8s_newrelic_license_key: !vault...
 
 
 Maintainer information
