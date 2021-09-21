@@ -3,6 +3,9 @@ k8s_kubeconfig: ~/.kube/config
 k8s_wait_timeout: 300  # seconds
 
 k8s_hosting_services_project_name: ""
+k8s_hosting_services_backup_base_bucket: caktus-hosting-services-backups
+k8s_hosting_services_aws_region: us-east-1
+k8s_hosting_services_aws_access_key: AKIAY4HLSP7PECOHWU7P
 k8s_hosting_services_aws_secret_access_key: ""
 k8s_hosting_services_database_url: ""
 k8s_hosting_services_healthcheck_url: ""
@@ -12,9 +15,9 @@ k8s_hosting_services_name: backup-job
 k8s_hosting_services_namespace: hosting-services
 k8s_hosting_services_environment:
   PROJECT_NAME: "{{ k8s_hosting_services_project_name }}"
-  BACKUP_BASE_BUCKET: caktus-hosting-services-backups
-  AWS_DEFAULT_REGION: us-east-1
-  AWS_ACCESS_KEY_ID: AKIAY4HLSP7PECOHWU7P
+  BACKUP_BASE_BUCKET: "{{ k8s_hosting_services_backup_base_bucket }}"
+  AWS_DEFAULT_REGION: "{{ k8s_hosting_services_aws_region }}"
+  AWS_ACCESS_KEY_ID: "{{ k8s_hosting_services_aws_access_key }}"
   AWS_SECRET_ACCESS_KEY: "{{ k8s_hosting_services_aws_secret_access_key }}"
   DATABASE_URL: "{{ k8s_hosting_services_database_url }}"
   BACKUP_HEALTHCHECK_URL: "{{ k8s_hosting_services_healthcheck_url }}"

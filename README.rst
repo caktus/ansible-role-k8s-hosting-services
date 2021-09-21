@@ -32,7 +32,10 @@ How do I add this role to my project
       ---
       - src: https://github.com/caktus/ansible-role-k8s-hosting-services
         name: caktus.k8s-hosting-services
-        version: v0.0.1
+        version: v0.3.0
+
+   If you're using `invoke-kubesae`, run: `inv deploy.install` to install the
+   Ansible requirements.
 
 #. Create a ``deploy/deploy-hosting-services.yaml`` file which you'll run once to set up
    the backup process (and then infrequently whenever you'd like to make changes to it).
@@ -41,52 +44,102 @@ How do I add this role to my project
    .. code-block:: yaml
 
       - name: caktus hosting services
-        hosts: cluster
+        hosts: production
         vars:
           ansible_connection: local
           ansible_python_interpreter: "{{ ansible_playbook_python }}"
         gather_facts: false
         roles:
-          - role: caktus.k8s-hosting-services
+          - role: caktus.k8s-hosting-services  # backups only
+        # Install configured monitoring tools (optional):
+        tasks:
+           - import_role:
+               name: caktus.k8s-hosting-services
+               tasks_from: monitoring
 
-#. Add a ``cluster`` group to your ``deploy/inventory`` file:
+
+#. Ensure the ``production`` host is in your ``deploy/inventory`` file:
 
    .. code-block:: ini
 
       ...
-      [cluster]
-      aws.amazon.com
+      [k8s]
+      staging
+      production
 
-#. You'll need to obtain and encrypt at least 3 variables for this role to work:
+#. Method 1: Client AWS account and S3 bucket (preferred)
 
-   A. Your production DATABASE_URL.
-   #. The hosting services AWS_SECRET_ACCESS_KEY.
-   #. The hosting services BACKUP_HEALTHCHECK_URL.
+   Clients typically prefer backups to be stored within their own AWS account.
+   This doesn't necessarily need to be the same account as the production K8s
+   cluster, but for simplicity it is usually set up this way.
 
-   The first should be obtained from your project's configuration and the other two
-   items will be given to you by the Caktus TS team. (TS Team: AWS_SECRET_ACCESS_KEY is
-   in the LastPass shared entry: "Caktus Website Hosting Services k8s secrets" and you
-   should generate a new healtcheck url at healtchecks.io and provide that to the
-   developer for their BACKUP_HEALTHCHECK_URL variable)
+   #. Create new S3 bucket to store backups, e.g. `project-production-backups`
+   #. Create new `caktus-backup` IAM user in client AWS account and create a new
+      access key. Save the `AWS_SECRET_ACCESS_KEY` for use below.
+   #. Attach a restricted IAM policy (remember to fill in the real bucket name)
+      to the user:
 
-   Use ansible-vault to encrypt them:
+   .. code-block:: json
+
+      {
+         "Version": "2012-10-17",
+         "Statement": [
+            {
+                  "Sid": "ListObjectsInBucket",
+                  "Effect": "Allow",
+                  "Action": [
+                     "s3:ListBucket"
+                  ],
+                  "Resource": [
+                     "arn:aws:s3:::project-production-backups"
+                  ]
+            },
+            {
+                  "Sid": "ObjectActions",
+                  "Effect": "Allow",
+                  "Action": "s3:PutObject",
+                  "Resource": [
+                     "arn:aws:s3:::project-production-backups/*"
+                  ]
+            }
+         ]
+      }
+
+#. Method 2: Caktus Hosting Services AWS Account and `caktus-hosting-services` S3 bucket
+
+   The `AWS_SECRET_ACCESS_KEY` is in the LastPass shared entry: "Caktus Website
+   Hosting Services k8s secrets".
+
+#. You'll need to encrypt at least 2 variables for this role to work:
+
+   A. Your production `DATABASE_URL`.
+   #. The `AWS_SECRET_ACCESS_KEY` for the backup IAM user.
+
+   The first should be obtained from your project's configuration and
+   `AWS_SECRET_ACCESS_KEY` is found above.
+
+   Use `ansible-vault` to encrypt them:
 
    .. code-block:: sh
 
       ansible-vault encrypt_string SECRET-VALUE-HERE
 
 #. Once you have those encrypted values, add the following to
-   ``deploy/group_vars/cluster.yaml``:
+   ``deploy/group_vars/production.yaml``:
 
    .. code-block:: yaml
 
       k8s_hosting_services_project_name: "your-project-name"
-      k8s_hosting_services_aws_secret_access_key: "<... secret from ansible-vault output ...>"
+      k8s_hosting_services_healthcheck_url: "<... project healthcheck url ...>"
       k8s_hosting_services_database_url: "<... secret from ansible-vault output ...>"
-      k8s_hosting_services_healthcheck_url: "<... secret from ansible-vault output ...>"
+      k8s_hosting_services_backup_base_bucket: "<... project backup S3 bucket ...>" OR "caktus-hosting-services"
+      k8s_hosting_services_aws_access_key: "<... project iam user access key ...>"
+      k8s_hosting_services_aws_secret_access_key: "<... secret from ansible-vault output ...>"
 
-   ``k8s_hosting_services_project_name`` will be the directory in S3 under which these
-   backups will be stored.
+   * You should generate a new healtcheck url at healtchecks.io and provide that
+     to the developer for their `k8s_hosting_services_healthcheck_url` variable.
+   * ``k8s_hosting_services_project_name`` will be the directory in S3 under which these
+     backups will be stored.
 
 #. By default, this role will run backups on a daily, weekly, monthly and yearly
    schedule. If you don't need all of those, or if you need a custom schedule, then
@@ -123,7 +176,7 @@ change to the configuration), you can deploy this to your kubernetes cluster.
 
   .. code-block:: sh
 
-     inv playbook deploy-hosting-services.yaml
+     inv deploy.playbook -n deploy-hosting-services.yaml
 
 * Without invoke-kubesae:
 
@@ -131,6 +184,20 @@ change to the configuration), you can deploy this to your kubernetes cluster.
 
      cd deploy/
      ansible-playbook deploy-hosting-services.yaml -vv
+
+
+Run a database backup job manually
+---------------------------------------
+
+By default, the shortest backup `cronjob` interval is **daily**, which means
+that the first `job` won't run for roughly 24 hours after the initial setup.
+This makes it difficult to test if backups are configured correctly.
+
+You can manually invoke a `job` like so:
+
+.. code-block:: shell
+
+   kubectl create job --from=cronjob/backup-job-daily test-job-0001 -n hosting-services
 
 
 Papertrail
@@ -142,6 +209,21 @@ Add the following for each cluster to monitor:
 
       k8s_papertrail_logspout_destination: syslog+tls://YYYYY.papertrailapp.com:NNNNN
       k8s_papertrail_logspout_syslog_hostname: "{{ k8s_cluster_name }}"
+
+
+New Relic Infrastructure
+---------------------------------------
+
+New Relic's [Helm Charts](https://github.com/newrelic/helm-charts/) are used to
+install New Relic Infrastructure monitoring.
+
+Add the following for each cluster to monitor:
+
+   .. code-block:: yaml
+
+      # https://github.com/newrelic/helm-charts/releases
+      k8s_newrelic_chart_version: "2.22.3"
+      k8s_newrelic_license_key: !vault...
 
 
 Maintainer information
