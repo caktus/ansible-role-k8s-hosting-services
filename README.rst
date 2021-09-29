@@ -159,7 +159,7 @@ How do I add this role to my project
         - label: yearly
           schedule: "@yearly"
         - label: every2hours
-          schedule: ""* */2 * * *"
+          schedule: "0 */2 * * *"
 
 #. Review ``defaults/main.yml`` in this repo to see other variables that you can override.
 
