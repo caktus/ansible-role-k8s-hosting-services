@@ -1,6 +1,12 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
+v0.4.0 on 2022-02-17
+~~~~~~~~~~~~~~~~~~~~
+* Add variables to support enabling encryption
+* Default to PostgreSQL 12 client version
+
+
 v0.3.0 on 2021-09-15
 ~~~~~~~~~~~~~~~~~~~~
 * Add detailed documentation for new setups using non-Caktus S3 buckets

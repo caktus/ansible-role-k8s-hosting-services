@@ -9,6 +9,9 @@ k8s_hosting_services_aws_access_key: AKIAY4HLSP7PECOHWU7P
 k8s_hosting_services_aws_secret_access_key: ""
 k8s_hosting_services_database_url: ""
 k8s_hosting_services_healthcheck_url: ""
+k8s_hosting_services_encrypt_secret: ""
+k8s_hosting_services_backup_all: "off"
+k8s_hosting_services_backup_all_default_db: postgres
 
 k8s_hosting_services_enabled: true
 k8s_hosting_services_name: backup-job
@@ -21,8 +24,12 @@ k8s_hosting_services_environment:
   AWS_SECRET_ACCESS_KEY: "{{ k8s_hosting_services_aws_secret_access_key }}"
   DATABASE_URL: "{{ k8s_hosting_services_database_url }}"
   BACKUP_HEALTHCHECK_URL: "{{ k8s_hosting_services_healthcheck_url }}"
+  BACKUP_ENCRYPT: "{{ (k8s_hosting_services_encrypt_secret | length > 0) | ternary('on', 'off') }}"
+  BACKUP_ENCRYPT_SECRET: "{{ k8s_hosting_services_encrypt_secret }}"
+  BACKUP_ALL: "{{ k8s_hosting_services_backup_all }}"
+  BACKUP_ALL_DEFAULT_DB: "{{ k8s_hosting_services_backup_all_default_db }}"
 k8s_hosting_services_image: ghcr.io/caktus/k8s-caktus-backup
-k8s_hosting_services_image_tag: 0.0.4
+k8s_hosting_services_image_tag: 0.1.0-postgres12
 k8s_hosting_services_image_pull_policy: IfNotPresent
 k8s_hosting_services_resources:
   requests:
