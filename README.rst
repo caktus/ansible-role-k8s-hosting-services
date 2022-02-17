@@ -32,7 +32,7 @@ How do I add this role to my project
       ---
       - src: https://github.com/caktus/ansible-role-k8s-hosting-services
         name: caktus.k8s-hosting-services
-        version: v0.3.0
+        version: v0.5.0
 
    If you're using `invoke-kubesae`, run: `inv deploy.install` to install the
    Ansible requirements.
