@@ -1,10 +1,15 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
-v0.4.0 on 2022-02-17
+v0.5.0 on 2022-02-17
 ~~~~~~~~~~~~~~~~~~~~
 * Add variables to support enabling encryption
 * Default to PostgreSQL 12 client version
+
+
+v0.4.0 on 2021-09-29
+~~~~~~~~~~~~~~~~~~~~
+* Fix docs (#15)
 
 
 v0.3.0 on 2021-09-15
