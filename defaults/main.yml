@@ -12,6 +12,12 @@ k8s_hosting_services_healthcheck_url: ""
 k8s_hosting_services_encrypt_secret: ""
 k8s_hosting_services_backup_all: "off"
 k8s_hosting_services_backup_all_default_db: postgres
+k8s_hosting_services_backup_s3: "off"
+k8s_hosting_services_backup_s3_source_bucket: ""
+k8s_hosting_services_backup_s3_source_region: us-east-1
+k8s_hosting_services_backup_s3_source_endpoint_url: https://s3.us-east-1.amazonaws.com/
+k8s_hosting_services_backup_s3_source_aws_access_key: ""
+k8s_hosting_services_backup_s3_source_aws_secret_access_key: ""
 
 k8s_hosting_services_enabled: true
 k8s_hosting_services_name: backup-job
@@ -28,8 +34,14 @@ k8s_hosting_services_environment:
   BACKUP_ENCRYPT_SECRET: "{{ k8s_hosting_services_encrypt_secret }}"
   BACKUP_ALL: "{{ k8s_hosting_services_backup_all }}"
   BACKUP_ALL_DEFAULT_DB: "{{ k8s_hosting_services_backup_all_default_db }}"
+  BACKUP_SOURCE_S3_BUCKET: "{{ k8s_hosting_services_backup_s3 }}"
+  SOURCE_AWS_BUCKET: "{{ k8s_hosting_services_backup_s3_source_bucket }}"
+  SOURCE_AWS_REGION: "{{ k8s_hosting_services_backup_s3_source_region }}"
+  SOURCE_AWS_ACCESS_KEY_ID: "{{ k8s_hosting_services_backup_s3_source_aws_access_key }}"
+  SOURCE_AWS_SECRET_ACCESS_KEY: "{{ k8s_hosting_services_backup_s3_source_aws_secret_access_key }}"
+  SOURCE_AWS_ENDPOINT_URL: "{{ k8s_hosting_services_backup_s3_source_endpoint_url }}"
 k8s_hosting_services_image: ghcr.io/caktus/k8s-caktus-backup
-k8s_hosting_services_image_tag: 0.1.0-postgres12
+k8s_hosting_services_image_tag: 0.2.0-postgres12
 k8s_hosting_services_image_pull_policy: IfNotPresent
 k8s_hosting_services_resources:
   requests:
