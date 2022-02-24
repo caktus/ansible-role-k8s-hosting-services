@@ -8,7 +8,8 @@ caktus.k8s-hosting-services
 An Ansible role to allow Caktus Kubernetes projects to take advantage of common
 Caktus-provided services. These include:
 
-* backing up the Postgres database to the proper Caktus Hosting Services AWS S3 bucket.
+* backing up the Postgres database to the backup AWS S3 bucket.
+* backing up the environment S3 bucket to the backup AWS S3 bucket.
 * More coming soon! (Papertrail, NewRelic infra, etc)
 
 License

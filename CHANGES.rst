@@ -1,6 +1,12 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
+
+v0.6.0 on 2022-02-24
+~~~~~~~~~~~~~~~~~~~~
+* Add S3 bucket backup support
+
+
 v0.5.0 on 2022-02-17
 ~~~~~~~~~~~~~~~~~~~~
 * Add variables to support enabling encryption
