@@ -43,7 +43,7 @@ k8s_hosting_services_environment:
   SOURCE_AWS_CA_BUNDLE: "{{ k8s_hosting_services_backup_s3_source_ca_bundle | default('') }}"
   SOURCE_AWS_NO_VERIFY_SSL: "{{ k8s_hosting_services_backup_s3_source_no_verify_ssl | default('') }}"
 k8s_hosting_services_image: ghcr.io/caktus/k8s-caktus-backup
-k8s_hosting_services_image_tag: 0.3.0-postgres12
+k8s_hosting_services_image_tag: 0.4.0-postgres12
 k8s_hosting_services_image_pull_policy: IfNotPresent
 k8s_hosting_services_resources:
   requests:

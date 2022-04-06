@@ -5,6 +5,7 @@ caktus.k8s-hosting-services Releases
 v0.7.0 on 2022-04-06
 ~~~~~~~~~~~~~~~~~~~~
 * Add optional support for `SOURCE_AWS_CA_BUNDLE` and `SOURCE_AWS_NO_VERIFY_SSL` environment variables
+* Default to `0.4.0-postgres12` Docker image tag
 
 
 v0.6.1 on 2022-03-01
