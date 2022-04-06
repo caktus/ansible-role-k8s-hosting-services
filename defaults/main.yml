@@ -39,9 +39,9 @@ k8s_hosting_services_environment:
   SOURCE_AWS_REGION: "{{ k8s_hosting_services_backup_s3_source_region }}"
   SOURCE_AWS_ACCESS_KEY_ID: "{{ k8s_hosting_services_backup_s3_source_aws_access_key }}"
   SOURCE_AWS_SECRET_ACCESS_KEY: "{{ k8s_hosting_services_backup_s3_source_aws_secret_access_key }}"
-  SOURCE_AWS_ENDPOINT_URL: "{{ k8s_hosting_services_backup_s3_source_endpoint_url | default(omit) }}"
-  SOURCE_AWS_CA_BUNDLE: "{{ k8s_hosting_services_backup_s3_source_ca_bundle | default(omit) }}"
-  SOURCE_AWS_NO_VERIFY_SSL: "{{ k8s_hosting_services_backup_s3_source_no_verify_ssl | default(omit) }}"
+  SOURCE_AWS_ENDPOINT_URL: "{{ k8s_hosting_services_backup_s3_source_endpoint_url | default('') }}"
+  SOURCE_AWS_CA_BUNDLE: "{{ k8s_hosting_services_backup_s3_source_ca_bundle | default('') }}"
+  SOURCE_AWS_NO_VERIFY_SSL: "{{ k8s_hosting_services_backup_s3_source_no_verify_ssl | default('') }}"
 k8s_hosting_services_image: ghcr.io/caktus/k8s-caktus-backup
 k8s_hosting_services_image_tag: 0.3.0-postgres12
 k8s_hosting_services_image_pull_policy: IfNotPresent
