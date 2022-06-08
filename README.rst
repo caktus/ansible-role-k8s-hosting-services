@@ -1,9 +1,10 @@
 caktus.k8s-hosting-services
 ===========================
 
-.. sidebar:: Build Status
+|pre-commit|
 
-   :main: |main-status|
+.. |pre-commit| image:: https://github.com/caktus/ansible-role-k8s-hosting-services/actions/workflows/test.yml/badge.svg
+   :target: https://github.com/caktus/ansible-role-k8s-hosting-services/actions/workflows/test.yml
 
 An Ansible role to allow Caktus Kubernetes projects to take advantage of common
 Caktus-provided services. These include:
