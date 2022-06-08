@@ -135,6 +135,7 @@ How do I add this role to my project
       k8s_hosting_services_healthcheck_url: "<... project healthcheck url ...>"
       k8s_hosting_services_database_url: "<... secret from ansible-vault output ...>"
       k8s_hosting_services_backup_base_bucket: "<... project backup S3 bucket ...>" OR "caktus-hosting-services"
+      k8s_hosting_services_aws_region: "<... bucket region ...>"
       k8s_hosting_services_aws_access_key: "<... project iam user access key ...>"
       k8s_hosting_services_aws_secret_access_key: "<... secret from ansible-vault output ...>"
 
@@ -216,7 +217,7 @@ Add the following for each cluster to monitor:
 New Relic Infrastructure
 ---------------------------------------
 
-New Relic's [Helm Charts](https://github.com/newrelic/helm-charts/) are used to
+New Relic's `Helm Charts <https://github.com/newrelic/helm-charts/>`_ are used to
 install New Relic Infrastructure monitoring.
 
 Add the following for each cluster to monitor:
@@ -241,8 +242,3 @@ set up a Python 3 virtualenv and then set up pre-commit:
 
 The pre-commit tasks will run on each commit locally, and will run in Github Actions for
 each pull request.
-
-.. |master-status| image::
-    https://github.com/caktus/ansible-role-k8s-hosting-services/workflows/test/badge.svg?branch=master
-    :alt: Build Status
-    :target: https://github.com/caktus/ansible-role-k8s-hosting-services/actions?query=branch%3Amaster
