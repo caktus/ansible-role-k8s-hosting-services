@@ -59,6 +59,26 @@ k8s_hosting_services_cron_schedules:
   - label: yearly
     schedule: "@yearly"
 
+# Disaster Recovery deployment
+k8s_restore_name: disaster-recovery
+k8s_restore_namespace: "{{ k8s_hosting_services_namespace }}"
+k8s_restore_image: "{{ k8s_hosting_services_image }}"
+k8s_restore_image_tag: "{{ k8s_hosting_services_image_tag }}"
+k8s_restore_image_pull_policy: "{{ k8s_hosting_services_image_pull_policy }}"
+k8s_restore_replicas: 1
+k8s_restore_resources: "{{ k8s_hosting_services_resources }}"
+k8s_restore_environment: {}
+k8s_restore_containers:
+  - name: "{{ k8s_restore_name }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    image: "{{ k8s_restore_image }}"
+    tag: "{{ k8s_restore_image_tag }}"
+    image_pull_policy: "{{ k8s_restore_image_pull_policy }}"
+    replicas: "{{ k8s_restore_replicas }}"
+    resources: "{{ k8s_restore_resources }}"
+    environment: "{{ k8s_restore_environment }}"
+k8s_restore_remote_archive_path: /tmp/db.pgdump
+
 k8s_cluster_name: ''
 
 k8s_papertrail_logspout_enabled: "{{ k8s_papertrail_logspout_destination | length > 0 }}"
