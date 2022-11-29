@@ -1,26 +1,100 @@
 - name: Create namespace for recovery environment
   kubernetes.core.k8s:
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
-    state: present
-    wait: yes
-    validate:
-      fail_on_error: yes
-      strict: yes
     definition:
       apiVersion: v1
       kind: Namespace
       metadata:
         name: "{{ k8s_restore_namespace }}"
+    state: present
+    wait: yes
+    validate:
+      fail_on_error: yes
+      strict: yes
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
 
 - name: Create recovery deployment
   kubernetes.core.k8s:
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('template', 'hosting-services/deploy-restore.yaml.j2') }}"
     state: present
     wait: yes
     wait_timeout: "{{ k8s_wait_timeout }}"
     validate:
       fail_on_error: yes
       strict: yes
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+
+- name: Find running restore pod
+  kubernetes.core.k8s_info:
+    kind: Pod
+    label_selectors:
+      - "app={{ k8s_restore_name }}"
+    field_selectors:
+      - status.phase=Running
+    wait: yes
+    wait_timeout: "{{ k8s_wait_timeout }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+  register: restore_pod
+  failed_when: not restore_pod.resources
+
+- name: Save pod name
+  ansible.builtin.set_fact:
+    pod_name: "{{ restore_pod.resources.0.metadata.name }}"
+
+- name: Drop existing database
+  kubernetes.core.k8s_exec:
+    command: sh -c 'dropdb --if-exists ${TARGET_DB_NAME}'
+    pod: "{{ pod_name }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+  register: drop_command
+  changed_when: "'does not exist, skipping' not in drop_command.stderr"
+
+- name: Create database
+  kubernetes.core.k8s_exec:
+    command: sh -c 'createdb ${TARGET_DB_NAME}'
+    pod: "{{ pod_name }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+
+- name: Copy local DB archive to remote pod
+  kubernetes.core.k8s_cp:
+    remote_path: "{{ k8s_restore_remote_archive_path }}"
+    local_path: "{{ k8s_restore_local_archive_path|mandatory }}"
+    pod: "{{ pod_name }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+
+- name: Restore database from archive
+  kubernetes.core.k8s_exec:
+    command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --dbname ${DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
+    pod: "{{ pod_name }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+
+- name: Remove DB archive from pod
+  kubernetes.core.k8s_exec:
+    command: "rm {{ k8s_restore_remote_archive_path }}"
+    pod: "{{ pod_name }}"
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+
+- name: Delete recovery deployment
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'hosting-services/deploy-restore.yaml.j2') }}"
+    state: absent
+    wait: yes
+    wait_timeout: "{{ k8s_wait_timeout }}"
+    validate:
+      fail_on_error: yes
+      strict: yes
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
