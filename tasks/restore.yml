@@ -44,6 +44,19 @@
   ansible.builtin.set_fact:
     pod_name: "{{ restore_pod.resources.0.metadata.name }}"
 
+- name: Scale down deployments to release database connections
+  kubernetes.core.k8s_scale:
+    api_version: v1
+    kind: "{{ item.kind }}"
+    name: "{{ item.name }}"
+    replicas: 0
+    wait_timeout: 60
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+  loop:
+    - {kind: 'Deployment', name: 'app'}
+
 - name: Drop existing database
   kubernetes.core.k8s_exec:
     command: sh -c 'dropdb --if-exists ${TARGET_DB_NAME}'
@@ -86,6 +99,19 @@
     namespace: "{{ k8s_restore_namespace }}"
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
+
+- name: Restore deployments
+  kubernetes.core.k8s_scale:
+    api_version: v1
+    kind: "{{ item.kind }}"
+    name: "{{ item.name }}"
+    replicas: "{{ item.replicas }}"
+    wait_timeout: 60
+    namespace: "{{ k8s_restore_namespace }}"
+    context: "{{ k8s_context|mandatory }}"
+    kubeconfig: "{{ k8s_kubeconfig }}"
+  loop:
+    - {kind: 'Deployment', name: 'app', replicas: 2}
 
 - name: Delete recovery deployment
   kubernetes.core.k8s:
