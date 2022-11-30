@@ -44,7 +44,7 @@
   ansible.builtin.set_fact:
     pod_name: "{{ restore_pod.resources.0.metadata.name }}"
 
-- name: Scale down deployments to release database connections
+- name: Scale down pods to release database connections
   kubernetes.core.k8s_scale:
     api_version: v1
     kind: "{{ item.kind }}"
@@ -54,12 +54,12 @@
     namespace: "{{ k8s_restore_namespace }}"
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
-  loop:
-    - {kind: 'Deployment', name: 'app'}
+  loop: "{{ k8s_restore_scale_pods }}"
+  when: "k8s_restore_scale_pods | length > 0"
 
 - name: Drop existing database
   kubernetes.core.k8s_exec:
-    command: sh -c 'dropdb --if-exists ${TARGET_DB_NAME}'
+    command: sh -c 'dropdb --if-exists ${TARGET_DATABASE_NAME}'
     pod: "{{ pod_name }}"
     namespace: "{{ k8s_restore_namespace }}"
     context: "{{ k8s_context|mandatory }}"
@@ -69,7 +69,7 @@
 
 - name: Create database
   kubernetes.core.k8s_exec:
-    command: sh -c 'createdb ${TARGET_DB_NAME}'
+    command: sh -c 'createdb ${TARGET_DATABASE_NAME}'
     pod: "{{ pod_name }}"
     namespace: "{{ k8s_restore_namespace }}"
     context: "{{ k8s_context|mandatory }}"
@@ -86,7 +86,7 @@
 
 - name: Restore database from archive
   kubernetes.core.k8s_exec:
-    command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --dbname ${DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
+    command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
     pod: "{{ pod_name }}"
     namespace: "{{ k8s_restore_namespace }}"
     context: "{{ k8s_context|mandatory }}"
@@ -100,7 +100,7 @@
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
 
-- name: Restore deployments
+- name: Restore pods
   kubernetes.core.k8s_scale:
     api_version: v1
     kind: "{{ item.kind }}"
@@ -110,8 +110,8 @@
     namespace: "{{ k8s_restore_namespace }}"
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
-  loop:
-    - {kind: 'Deployment', name: 'app', replicas: 2}
+  loop: "{{ k8s_restore_scale_pods }}"
+  when: "k8s_restore_scale_pods | length > 0"
 
 - name: Delete recovery deployment
   kubernetes.core.k8s:

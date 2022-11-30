@@ -68,7 +68,28 @@ k8s_restore_image_tag: "{{ k8s_hosting_services_image_tag }}"
 k8s_restore_image_pull_policy: "{{ k8s_hosting_services_image_pull_policy }}"
 k8s_restore_replicas: 1
 k8s_restore_resources: "{{ k8s_hosting_services_resources }}"
-k8s_restore_environment: {}
+k8s_restore_target_db_url: ''
+k8s_restore_target_db_name: "{{ k8s_restore_target_db_url | split('/') | last }}"
+k8s_restore_remote_archive_path: /tmp/db.pgc
+k8s_restore_maint_user: ''
+k8s_restore_maint_host: ''
+k8s_restore_maint_port: ''
+k8s_restore_maint_name: ''
+k8s_restore_maint_pass: ''
+k8s_restore_environment:
+  # Automatically connect as maint user for psql/dropdb/createdb commands
+  PGUSER: "{{ k8s_restore_maint_user }}"
+  PGHOST: "{{ k8s_restore_maint_host }}"
+  PGPORT: "{{ k8s_restore_maint_port }}"
+  PGDATABASE: "{{ k8s_restore_maint_name }}"
+  PGPASSWORD: "{{ k8s_restore_maint_pass }}"
+  # The DB to DROP and CREATE
+  TARGET_DATABASE_NAME: "{{ k8s_restore_target_db_name }}"
+  TARGET_DATABASE_URL: "{{ k8s_restore_target_db_url }}"
+# List of K8s objects to scale before/after db restore to release connections. For example:
+#   k8s_restore_scale_pods:
+#    - {kind: 'Deployment', name: 'app', replicas: 2}
+k8s_restore_scale_pods: []
 k8s_restore_containers:
   - name: "{{ k8s_restore_name }}"
     namespace: "{{ k8s_restore_namespace }}"
@@ -79,7 +100,6 @@ k8s_restore_containers:
     replicas: "{{ k8s_restore_replicas }}"
     resources: "{{ k8s_restore_resources }}"
     environment: "{{ k8s_restore_environment }}"
-k8s_restore_remote_archive_path: /tmp/db.pgdump
 
 k8s_cluster_name: ''
 
