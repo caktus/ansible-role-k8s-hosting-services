@@ -36,102 +36,104 @@
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
 
-- name: Find running restore pod
-  kubernetes.core.k8s_info:
-    kind: Pod
-    label_selectors:
-      - "app={{ k8s_restore_name }}"
-    field_selectors:
-      - status.phase=Running
-    wait: yes
-    wait_timeout: "{{ k8s_wait_timeout }}"
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
-  register: restore_pod
-  failed_when: not restore_pod.resources
+- name: Restore database
+  block:
+    - name: Find running restore pod
+      kubernetes.core.k8s_info:
+        kind: Pod
+        label_selectors:
+          - "app={{ k8s_restore_name }}"
+        field_selectors:
+          - status.phase=Running
+        wait: yes
+        wait_timeout: "{{ k8s_wait_timeout }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+      register: restore_pod
+      failed_when: not restore_pod.resources
 
-- name: Save pod name
-  ansible.builtin.set_fact:
-    pod_name: "{{ restore_pod.resources.0.metadata.name }}"
+    - name: Save pod name
+      ansible.builtin.set_fact:
+        pod_name: "{{ restore_pod.resources.0.metadata.name }}"
 
-- name: Scale down pods to release database connections
-  kubernetes.core.k8s_scale:
-    api_version: v1
-    kind: "{{ item.kind }}"
-    name: "{{ item.name }}"
-    replicas: 0
-    wait_timeout: 60
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
-  loop: "{{ k8s_restore_scale_pods }}"
-  when: "k8s_restore_scale_pods | length > 0"
+    - name: Scale down pods to release database connections
+      kubernetes.core.k8s_scale:
+        api_version: v1
+        kind: "{{ item.kind }}"
+        name: "{{ item.name }}"
+        replicas: 0
+        wait_timeout: 60
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+      loop: "{{ k8s_restore_scale_pods }}"
+      when: "k8s_restore_scale_pods | length > 0"
 
-- name: Drop existing database
-  kubernetes.core.k8s_exec:
-    command: sh -c 'dropdb --if-exists ${TARGET_DATABASE_NAME}'
-    pod: "{{ pod_name }}"
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
-  register: drop_command
-  changed_when: "'does not exist, skipping' not in drop_command.stderr"
+    - name: Drop existing database
+      kubernetes.core.k8s_exec:
+        command: sh -c 'dropdb --if-exists ${TARGET_DATABASE_NAME}'
+        pod: "{{ pod_name }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+      register: drop_command
+      changed_when: "'does not exist, skipping' not in drop_command.stderr"
 
-- name: Create database
-  kubernetes.core.k8s_exec:
-    command: sh -c 'createdb ${TARGET_DATABASE_NAME}'
-    pod: "{{ pod_name }}"
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
+    - name: Create database
+      kubernetes.core.k8s_exec:
+        command: sh -c 'createdb ${TARGET_DATABASE_NAME}'
+        pod: "{{ pod_name }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
 
-- name: Copy local DB archive to remote pod
-  kubernetes.core.k8s_cp:
-    remote_path: "{{ k8s_restore_remote_archive_path }}"
-    local_path: "{{ k8s_restore_local_archive_path|mandatory }}"
-    pod: "{{ pod_name }}"
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
+    - name: Copy local DB archive to remote pod
+      kubernetes.core.k8s_cp:
+        remote_path: "{{ k8s_restore_remote_archive_path }}"
+        local_path: "{{ k8s_restore_local_archive_path|mandatory }}"
+        pod: "{{ pod_name }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
 
-- name: Restore database from archive
-  kubernetes.core.k8s_exec:
-    command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
-    pod: "{{ pod_name }}"
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
+    - name: Restore database from archive
+      kubernetes.core.k8s_exec:
+        command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
+        pod: "{{ pod_name }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
 
-- name: Remove DB archive from pod
-  kubernetes.core.k8s_exec:
-    command: "rm {{ k8s_restore_remote_archive_path }}"
-    pod: "{{ pod_name }}"
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
+    - name: Remove DB archive from pod
+      kubernetes.core.k8s_exec:
+        command: "rm {{ k8s_restore_remote_archive_path }}"
+        pod: "{{ pod_name }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
 
-- name: Restore pods
-  kubernetes.core.k8s_scale:
-    api_version: v1
-    kind: "{{ item.kind }}"
-    name: "{{ item.name }}"
-    replicas: "{{ item.replicas }}"
-    wait_timeout: 60
-    namespace: "{{ k8s_restore_namespace }}"
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
-  loop: "{{ k8s_restore_scale_pods }}"
-  when: "k8s_restore_scale_pods | length > 0"
-
-- name: Delete recovery deployment
-  kubernetes.core.k8s:
-    definition: "{{ lookup('template', 'hosting-services/deploy-restore.yaml.j2') }}"
-    state: absent
-    wait: yes
-    wait_timeout: "{{ k8s_wait_timeout }}"
-    validate:
-      fail_on_error: yes
-      strict: yes
-    context: "{{ k8s_context|mandatory }}"
-    kubeconfig: "{{ k8s_kubeconfig }}"
+    - name: Restore pods
+      kubernetes.core.k8s_scale:
+        api_version: v1
+        kind: "{{ item.kind }}"
+        name: "{{ item.name }}"
+        replicas: "{{ item.replicas }}"
+        wait_timeout: 60
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+      loop: "{{ k8s_restore_scale_pods }}"
+      when: "k8s_restore_scale_pods | length > 0"
+  always:
+    - name: Delete recovery deployment
+      kubernetes.core.k8s:
+        definition: "{{ lookup('template', 'hosting-services/deploy-restore.yaml.j2') }}"
+        state: absent
+        wait: yes
+        wait_timeout: "{{ k8s_wait_timeout }}"
+        validate:
+          fail_on_error: yes
+          strict: yes
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
