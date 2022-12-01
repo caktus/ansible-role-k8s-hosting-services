@@ -1,3 +1,14 @@
+- name: Check if local archive path exists
+  ansible.builtin.stat:
+    path: "{{ k8s_restore_local_archive_path|mandatory }}"
+    get_checksum: no
+  register: local_archive_stat
+
+- name: Fail if the database archive does not exist
+  ansible.builtin.fail:
+    msg: "{{ k8s_restore_local_archive_path|mandatory }} does not exist"
+  when: local_archive_stat.stat.exists == false
+
 - name: Create namespace for recovery environment
   kubernetes.core.k8s:
     definition:
