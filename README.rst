@@ -229,6 +229,23 @@ Add the following for each cluster to monitor:
       k8s_newrelic_license_key: !vault...
 
 
+Database restore
+---------------------------------------
+
+Create a playbook like so:
+
+   .. code-block:: yaml
+      # file: db-restore.yaml
+
+      - hosts: k8s
+      tasks:
+      - import_role:
+            name: caktus.k8s-hosting-services
+            tasks_from: restore
+
+See `defaults/main.yml` for variables to use.
+
+
 Maintainer information
 ----------------------
 
