@@ -2,6 +2,11 @@ caktus.k8s-hosting-services Releases
 ====================================
 
 
+v0.8.0 on 2022-12-02
+~~~~~~~~~~~~~~~~~~~~
+* Add ``deploy.db-restore`` task to manage database backup restore process in Ansible (#19)
+
+
 v0.7.0 on 2022-04-06
 ~~~~~~~~~~~~~~~~~~~~
 * Add optional support for `SOURCE_AWS_CA_BUNDLE` and `SOURCE_AWS_NO_VERIFY_SSL` environment variables
