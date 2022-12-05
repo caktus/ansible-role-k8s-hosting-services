@@ -234,9 +234,9 @@ Database restore
 
 Create a playbook like so:
 
-   .. code-block:: yaml
-      # file: db-restore.yaml
+.. code-block:: yaml
 
+      # file: db-restore.yaml
       - hosts: k8s
       tasks:
       - import_role:
