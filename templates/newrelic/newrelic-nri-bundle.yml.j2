@@ -1,39 +1,12 @@
-# enables newrelic-infrastructure
-infrastructure:
-  enabled: {{ k8s_newrelic_infrastructure_enabled }}
-
-# enables nri-prometheus
-prometheus:
-  enabled: {{ k8s_newrelic_prometheus_enabled }}
-
-# enables nri-metadata-injection
-webhook:
-  enabled: {{ k8s_newrelic_webhook_enabled }}
-
-# enables kube-state-metrics
-ksm:
-  enabled: {{ k8s_newrelic_ksm_enabled }}
-
-# enables nri-kube-events
-kubeEvents:
-  enabled: {{ k8s_newrelic_kubeevents_enabled }}
-
-# enables newrelic-logging
-logging:
-  enabled: {{ k8s_newrelic_logging_enabled }}
-
-# enables newrelic-pixie
-newrelic-pixie:
-  enabled: {{ k8s_newrelic_pixie_enabled }}
-
-# enables pixie-chart
-pixie-chart:
-  enabled: {{ k8s_newrelic_pixie_chart_enabled }}
-
-# enables newrelic-infra-operator
-newrelic-infra-operator:
-  enabled: {{ k8s_newrelic_infra_operator_enabled }}
-
-global:
-  licenseKey: "{{ k8s_newrelic_license_key }}"
-  cluster: "{{ k8s_newrelic_cluster_name }}"
+newrelic-infrastructure: {{ k8s_newrelic_values_newrelic_infrastructure | to_json }}
+nri-prometheus: {{ k8s_newrelic_values_nri_prometheus | to_json }}
+nri-metadata-injection: {{ k8s_newrelic_values_nri_metadata_injection | to_json }}
+kube-state-metrics: {{ k8s_newrelic_values_kube_state_metrics | to_json }}
+nri-kube-events: {{ k8s_newrelic_values_nri_kube_events | to_json }}
+newrelic-logging: {{ k8s_newrelic_values_newrelic_logging | to_json }}
+newrelic-pixie: {{ k8s_newrelic_values_newrelic_pixie | to_json }}
+pixie-chart: {{ k8s_newrelic_values_pixie_chart | to_json }}
+newrelic-infra-operator: {{ k8s_newrelic_values_newrelic_infra_operator | to_json }}
+newrelic-prometheus-agent: {{ k8s_newrelic_values_newrelic_prometheus_agent | to_json }}
+newrelic-k8s-metrics-adapter: {{ k8s_newrelic_values_newrelic_k8s_metrics_adapter | to_json }}
+global: {{ k8s_newrelic_values_global | to_json }}

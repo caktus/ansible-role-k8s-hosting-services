@@ -126,11 +126,68 @@ k8s_newrelic_chart_ref: nri-bundle
 k8s_newrelic_namespace: newrelic
 k8s_newrelic_release_name: newrelic-bundle
 k8s_newrelic_infrastructure_enabled: true
-k8s_newrelic_prometheus_enabled: false
-k8s_newrelic_webhook_enabled: true
-k8s_newrelic_ksm_enabled: true
-k8s_newrelic_kubeevents_enabled: true
+k8s_newrelic_nri_prometheus_enabled: false
+k8s_newrelic_nri_metadata_injection_enabled: true
+k8s_newrelic_kube_state_metrics_enabled: true
+k8s_newrelic_nri_kube_events_enabled: true
 k8s_newrelic_logging_enabled: false
 k8s_newrelic_pixie_enabled: false
 k8s_newrelic_pixie_chart_enabled: false
 k8s_newrelic_infra_operator_enabled: false
+k8s_newrelic_prometheus_agent_enabled: false
+k8s_newrelic_k8s_metrics_adapter_enabled: false
+k8s_newrelic_low_data_mode: true
+# Per-bundle values
+# https://github.com/newrelic/helm-charts/blob/master/charts/nri-bundle/values.yaml
+k8s_newrelic_values_newrelic_infrastructure:
+  # New Relic Kubernetes monitoring solution.
+  # newrelic-infrastructure.enabled -- Install the [`newrelic-infrastructure` chart](https://github.com/newrelic/nri-kubernetes/tree/main/charts/newrelic-infrastructure)
+  enabled: "{{ k8s_newrelic_infrastructure_enabled }}"
+k8s_newrelic_values_nri_prometheus:
+  # New Relic Prometheus OpenMetrics integration.
+  # nri-prometheus.enabled -- Install the [`nri-prometheus` chart](https://github.com/newrelic/nri-prometheus/tree/main/charts/nri-prometheus)
+  enabled: "{{ k8s_newrelic_nri_prometheus_enabled }}"
+k8s_newrelic_values_nri_metadata_injection:
+  # Kubernetes metadata injection for New Relic APM to make a linkage between
+  # APM and Infrastructure data.
+  # nri-metadata-injection.enabled -- Install the [`nri-metadata-injection` chart](https://github.com/newrelic/k8s-metadata-injection/tree/main/charts/nri-metadata-injection)
+  enabled: "{{ k8s_newrelic_nri_metadata_injection_enabled }}"
+k8s_newrelic_values_kube_state_metrics:
+  # A service that listens to the Kubernetes API server and generates metrics
+  # the health of the various objects inside, such as deployments, nodes and
+  # pods.
+  # kube-state-metrics.enabled -- Install the [`kube-state-metrics` chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics) from the stable helm charts repository.
+  # This is mandatory if `infrastructure.enabled` is set to `true` and the user does not provide its own instance of KSM version >=1.8 and <=2.0
+  enabled: "{{ k8s_newrelic_kube_state_metrics_enabled }}"
+k8s_newrelic_values_nri_kube_events:
+  # The New Relic Kubernetes events integration watches for events happening in
+  # your Kubernetes clusters and sends those events to New Relic.
+  # nri-kube-events.enabled -- Install the [`nri-kube-events` chart](https://github.com/newrelic/nri-kube-events/tree/main/charts/nri-kube-events)
+  enabled: "{{ k8s_newrelic_nri_kube_events_enabled }}"
+k8s_newrelic_values_newrelic_logging:
+  # New Relic offers a Fluent Bit output plugin to easily forward your logs to New Relic Logs.
+  # newrelic-logging.enabled -- Install the [`newrelic-logging` chart](https://github.com/newrelic/helm-charts/tree/master/charts/newrelic-logging)
+  enabled: "{{ k8s_newrelic_logging_enabled }}"
+k8s_newrelic_values_newrelic_pixie:
+  # Deploy the New Relic Pixie Integration.
+  # newrelic-pixie.enabled -- Install the [`newrelic-pixie`](https://github.com/newrelic/helm-charts/tree/master/charts/newrelic-pixie)
+  enabled: "{{ k8s_newrelic_pixie_enabled }}"
+k8s_newrelic_values_pixie_chart:
+  # Pixie is an open source observability tool for Kubernetes applications.
+  # pixie-chart.enabled -- Install the [`pixie-chart` chart](https://docs.pixielabs.ai/installing-pixie/install-schemes/helm/#3.-deploy)
+  enabled: "{{ k8s_newrelic_pixie_chart_enabled }}"
+k8s_newrelic_values_newrelic_infra_operator:
+  # Pluggable webhooks and controllers to support the k8s monitoring solution.
+  # newrelic-infra-operator.enabled -- Install the [`newrelic-infra-operator` chart](https://github.com/newrelic/newrelic-infra-operator/tree/main/charts/newrelic-infra-operator) (Beta)
+  enabled: "{{ k8s_newrelic_infra_operator_enabled }}"
+k8s_newrelic_values_newrelic_prometheus_agent:
+  # Deploys Prometheus Server in Agent mode configured by the newrelic-prometheus-configurator.
+  # newrelic-prometheus-agent.enabled -- Install the [`newrelic-prometheus-agent` chart](https://github.com/newrelic/newrelic-prometheus-configurator/tree/main/charts/newrelic-prometheus-agent)
+  enabled: "{{ k8s_newrelic_prometheus_agent_enabled }}"
+k8s_newrelic_values_newrelic_k8s_metrics_adapter:
+  # newrelic-k8s-metrics-adapter.enabled -- Install the [`newrelic-k8s-metrics-adapter.` chart](https://github.com/newrelic/newrelic-k8s-metrics-adapter/tree/main/charts/newrelic-k8s-metrics-adapter) (Beta)
+  enabled: "{{ k8s_newrelic_k8s_metrics_adapter_enabled }}"
+k8s_newrelic_values_global:
+  licenseKey: "{{ k8s_newrelic_license_key }}"
+  cluster: "{{ k8s_newrelic_cluster_name|default('') }}"
+  lowDataMode: "{{ k8s_newrelic_low_data_mode }}"
