@@ -109,7 +109,7 @@
 
     - name: Restore database from archive
       kubernetes.core.k8s_exec:
-        command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --schema public --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
+        command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --schema {{ k8s_restore_target_schema }} --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
         pod: "{{ pod_name }}"
         namespace: "{{ k8s_restore_namespace }}"
         context: "{{ k8s_context|mandatory }}"
