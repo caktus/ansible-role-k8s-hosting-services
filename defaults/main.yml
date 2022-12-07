@@ -121,7 +121,7 @@ k8s_newrelic_enabled: "{{ k8s_newrelic_license_key | length > 0 }}"
 k8s_newrelic_cluster_name: '{{ k8s_cluster_name }}'
 k8s_newrelic_license_key: ''
 # https://github.com/newrelic/helm-charts/releases
-k8s_newrelic_chart_version: "2.11.2"
+k8s_newrelic_chart_version: "4.10.0"
 k8s_newrelic_chart_ref: nri-bundle
 k8s_newrelic_namespace: newrelic
 k8s_newrelic_release_name: newrelic-bundle
