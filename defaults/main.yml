@@ -70,6 +70,7 @@ k8s_restore_replicas: 1
 k8s_restore_resources: "{{ k8s_hosting_services_resources }}"
 k8s_restore_target_db_url: ''
 k8s_restore_target_db_name: "{{ k8s_restore_target_db_url | split('/') | last }}"
+k8s_restore_sql_commands: []
 k8s_restore_remote_archive_path: /tmp/db.pgc
 k8s_restore_maint_user: ''
 k8s_restore_maint_host: ''
