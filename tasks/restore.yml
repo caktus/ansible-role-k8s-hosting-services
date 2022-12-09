@@ -88,6 +88,16 @@
         context: "{{ k8s_context|mandatory }}"
         kubeconfig: "{{ k8s_kubeconfig }}"
 
+    - name: Run post-create SQL commands
+      kubernetes.core.k8s_exec:
+        command: sh -c 'psql ${TARGET_DATABASE_NAME} -c "{{ item }}"'
+        pod: "{{ pod_name }}"
+        namespace: "{{ k8s_restore_namespace }}"
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+      loop: "{{ k8s_restore_sql_commands }}"
+      when: "k8s_restore_sql_commands | length > 0"
+
     - name: Copy local DB archive to remote pod
       kubernetes.core.k8s_cp:
         remote_path: "{{ k8s_restore_remote_archive_path }}"
@@ -99,7 +109,7 @@
 
     - name: Restore database from archive
       kubernetes.core.k8s_exec:
-        command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
+        command: "sh -c 'pg_restore --no-privileges --no-owner --clean --if-exists --schema {{ k8s_restore_target_schema }} --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'"
         pod: "{{ pod_name }}"
         namespace: "{{ k8s_restore_namespace }}"
         context: "{{ k8s_context|mandatory }}"
