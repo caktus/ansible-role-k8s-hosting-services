@@ -3,8 +3,9 @@ caktus.k8s-hosting-services Releases
 
 v0.9.0 on 2022-12-09
 ~~~~~~~~~~~~~~~~~~~~
-* Update New Relic configuration keys to match latest Helm chart keys
-* Enable ``lowDataMode`` support by default
+* Update New Relic configuration keys to match latest Helm chart keys (#20)
+* Enable New Relic ``lowDataMode`` support by default (#20)
+* Add support to run custom SQL commands with ``k8s_restore_sql_commands`` after a database restore (#21)
 
 v0.8.0 on 2022-12-05
 ~~~~~~~~~~~~~~~~~~~~
