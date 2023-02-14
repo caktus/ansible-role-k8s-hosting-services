@@ -48,7 +48,7 @@
   when: k8s_hosting_services_enabled
 
 - name: Add New Relic Helm chart
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
     chart_repo_url: https://helm-charts.newrelic.com
