@@ -1,6 +1,11 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
+v0.10.0 on 2023-02-14
+~~~~~~~~~~~~~~~~~~~~~
+* Use full ``kubernetes.core.k8s`` module references to support newer Ansible versions (#22)
+
+
 v0.9.0 on 2022-12-09
 ~~~~~~~~~~~~~~~~~~~~
 * Update New Relic configuration keys to match latest Helm chart keys (#20)
