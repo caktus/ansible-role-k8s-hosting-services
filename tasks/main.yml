@@ -1,7 +1,7 @@
 ---
 
 - name: Create namespace for Caktus Hosting Services
-  k8s:
+  kubernetes.core.k8s:
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
     state: "{{ k8s_hosting_services_enabled | ternary('present', 'absent') }}"
@@ -16,7 +16,7 @@
         name: "{{ k8s_hosting_services_namespace }}"
 
 - name: Create/update templates in Kubernetes
-  k8s:
+  kubernetes.core.k8s:
     context: "{{ k8s_context|mandatory }}"
     kubeconfig: "{{ k8s_kubeconfig }}"
     state: "{{ k8s_hosting_services_enabled | ternary('present', 'absent') }}"
