@@ -1,9 +1,11 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
-v0.10.0 on 2023-02-14
+
+v0.10.0 on 2023-04-25
 ~~~~~~~~~~~~~~~~~~~~~
-* Use full ``kubernetes.core.k8s`` module references to support newer Ansible versions (#22)
+* Switch `community.kubernetes.helm`, which breaks on newer Ansible versions, to `kubernetes.core.k8s`
+* Use full `kubernetes.core.k8s` path elsewhere
 
 
 v0.9.0 on 2022-12-09
