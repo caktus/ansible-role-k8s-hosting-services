@@ -15,7 +15,7 @@ type: Opaque
 stringData: {{ k8s_hosting_services_environment | to_json }}
 {% for crontab in k8s_hosting_services_cron_schedules %}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   namespace: "{{ k8s_hosting_services_namespace }}"

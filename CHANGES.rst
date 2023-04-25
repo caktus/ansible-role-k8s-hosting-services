@@ -2,10 +2,15 @@ caktus.k8s-hosting-services Releases
 ====================================
 
 
+v0.11.0 on 2023-04-25
+~~~~~~~~~~~~~~~~~~~~~
+* Support Kubernetes v1.25 by using the ``batch/v1`` API version for ``CronJob``, available since v1.21.
+
+
 v0.10.0 on 2023-04-25
 ~~~~~~~~~~~~~~~~~~~~~
-* Switch `community.kubernetes.helm`, which breaks on newer Ansible versions, to `kubernetes.core.k8s`
-* Use full `kubernetes.core.k8s` path elsewhere
+* Switch ``community.kubernetes.helm``, which breaks on newer Ansible versions, to ``kubernetes.core.k8s``
+* Use full ``kubernetes.core.k8s`` path elsewhere
 
 
 v0.9.0 on 2022-12-09
