@@ -109,7 +109,7 @@
 
     - name: Restore database from archive
       kubernetes.core.k8s_exec:
-        command: "sh -c {{ k8s_restore_pg_restore_command }}"
+        command: "sh -c '{{ k8s_restore_pg_restore_command }}'"
         pod: "{{ pod_name }}"
         namespace: "{{ k8s_restore_namespace }}"
         context: "{{ k8s_context|mandatory }}"
