@@ -88,7 +88,7 @@ k8s_restore_environment:
   # The DB to DROP and CREATE
   TARGET_DATABASE_NAME: "{{ k8s_restore_target_db_name }}"
   TARGET_DATABASE_URL: "{{ k8s_restore_target_db_url }}"
-k8s_restore_pg_restore_command: 'pg_restore --no-privileges --no-owner --schema {{ k8s_restore_target_schema }} --dbname ${TARGET_DATABASE_URL} {{ k8s_restore_remote_archive_path }}'
+k8s_restore_pg_restore_command: "pg_restore --no-privileges --no-owner --schema {{ k8s_restore_target_schema }} --dbname {{ k8s_restore_target_db_url }} {{ k8s_restore_remote_archive_path }}"
 # List of K8s objects to scale before/after db restore to release connections. For example:
 #   k8s_restore_scale_pods:
 #    - {kind: 'Deployment', name: 'app', replicas: 2}
