@@ -1,6 +1,9 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
+v0.12.0 on 2024-02-08
+~~~~~~~~~~~~~~~~~~~~~
+* Add ability to run ``pg_restore`` with alteranate flags during ``deploy.db-restore`` task by adding default value ``k8s_restore_pg_restore_command``
 
 v0.11.0 on 2023-04-25
 ~~~~~~~~~~~~~~~~~~~~~
