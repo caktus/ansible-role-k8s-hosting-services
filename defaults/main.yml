@@ -12,6 +12,7 @@ k8s_hosting_services_healthcheck_url: ""
 k8s_hosting_services_encrypt_secret: ""
 k8s_hosting_services_backup_all: "off"
 k8s_hosting_services_backup_all_default_db: postgres
+k8s_hosting_services_backup_redis_url: ""
 k8s_hosting_services_backup_s3: "off"
 k8s_hosting_services_backup_s3_source_bucket: ""
 k8s_hosting_services_backup_s3_source_region: us-east-1
@@ -34,6 +35,8 @@ k8s_hosting_services_environment:
   BACKUP_ENCRYPT_SECRET: "{{ k8s_hosting_services_encrypt_secret }}"
   BACKUP_ALL: "{{ k8s_hosting_services_backup_all }}"
   BACKUP_ALL_DEFAULT_DB: "{{ k8s_hosting_services_backup_all_default_db }}"
+  BACKUP_REDIS: "{{ (k8s_hosting_services_backup_redis_url | length > 0) | ternary('on', 'off') }}"
+  BACKUP_REDIS_URL: "{{ k8s_hosting_services_backup_redis_url }}"
   BACKUP_SOURCE_S3_BUCKET: "{{ k8s_hosting_services_backup_s3 }}"
   SOURCE_AWS_BUCKET: "{{ k8s_hosting_services_backup_s3_source_bucket }}"
   SOURCE_AWS_REGION: "{{ k8s_hosting_services_backup_s3_source_region }}"
@@ -43,7 +46,7 @@ k8s_hosting_services_environment:
   SOURCE_AWS_CA_BUNDLE: "{{ k8s_hosting_services_backup_s3_source_ca_bundle | default('') }}"
   SOURCE_AWS_NO_VERIFY_SSL: "{{ k8s_hosting_services_backup_s3_source_no_verify_ssl | default('') }}"
 k8s_hosting_services_image: ghcr.io/caktus/k8s-caktus-backup
-k8s_hosting_services_image_tag: 0.4.0-postgres12
+k8s_hosting_services_image_tag: 0.6.0-postgres15
 k8s_hosting_services_image_pull_policy: IfNotPresent
 k8s_hosting_services_resources:
   requests:
