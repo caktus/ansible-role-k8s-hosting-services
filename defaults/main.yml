@@ -109,20 +109,6 @@ k8s_restore_containers:
 
 k8s_cluster_name: ''
 
-k8s_papertrail_logspout_enabled: "{{ k8s_papertrail_logspout_destination | length > 0 }}"
-k8s_papertrail_logspout_destination: ''  # format: syslog+tls://logsN.papertrailapp.com:XXXXX
-k8s_papertrail_logspout_syslog_hostname: '{{ k8s_cluster_name }}'  # Systeam name displayed in Papertrail
-k8s_papertrail_logspout_syslog_tag: '{% raw %}{{ index .Container.Config.Labels "io.kubernetes.pod.namespace" }}[{{ index .Container.Config.Labels "io.kubernetes.pod.name" }}]{% endraw %}'
-k8s_papertrail_logspout_namespace: papertrail
-k8s_papertrail_logspout_image: gliderlabs/logspout
-k8s_papertrail_logspout_image_tag: v3.2.13
-k8s_papertrail_logspout_resources:
-  requests:
-    memory: 50Mi
-    cpu: "0.10"
-  limits:
-    memory: 128Mi
-
 k8s_newrelic_enabled: "{{ k8s_newrelic_license_key | length > 0 }}"
 k8s_newrelic_cluster_name: '{{ k8s_cluster_name }}'
 k8s_newrelic_license_key: ''

@@ -1,6 +1,10 @@
 caktus.k8s-hosting-services Releases
 ====================================
 
+v0.14.0 on 2025-07-11
+~~~~~~~~~~~~~~~~~~~~~
+* Remove Papertrail from project
+
 v0.13.0 on 2024-10-09
 ~~~~~~~~~~~~~~~~~~~~~
 * Add ability to backup Redis databases with ``k8s_hosting_services_backup_redis_url``
