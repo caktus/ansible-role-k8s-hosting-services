@@ -203,17 +203,6 @@ You can manually invoke a `job` like so:
    kubectl create job --from=cronjob/backup-job-daily test-job-0001 -n hosting-services
 
 
-Papertrail
----------------------------------------
-
-Add the following for each cluster to monitor:
-
-   .. code-block:: yaml
-
-      k8s_papertrail_logspout_destination: syslog+tls://YYYYY.papertrailapp.com:NNNNN
-      k8s_papertrail_logspout_syslog_hostname: "{{ k8s_cluster_name }}"
-
-
 New Relic Infrastructure
 ---------------------------------------
 
